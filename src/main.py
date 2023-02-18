@@ -1,11 +1,9 @@
-import datetime
-import json
-
 from fastapi import FastAPI
 from src.db.session import SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from src.crud import title
 from fastapi import Depends
+from src.schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
 
 app = FastAPI()
 
@@ -16,41 +14,12 @@ def get_db():
     finally:
         db.close()
 
-def get_daily_results(db: Session, date: datetime.date, country: str):
-    print(country)
-    res = db.execute(text(
-        f"SELECT entities->> ('{country}') FROM cons_data "
-        f"WHERE date(date) = date('{date}')"
+@app.post("/country", response_model=CountryDateResponse)
+async def country_entities(item: CountryDate, db: Session = Depends(get_db)):
+    return title.get_daily_results(db=db, item=item)
 
-    )).scalar_one_or_none()
-    return json.loads(res)
-
-day = datetime.date(2023, 2, 16)
-
-def get_entity_titles(db:Session, day, country, entity, entity_name):
-    res = db.execute(text(
-        "SELECT data FROM news_title "
-        "WHERE news_title.id::text IN "
-            "(SELECT jsonb_array_elements_text(entities #> '{%s, %s, %s}') " % (country, entity, entity_name) +
-            "FROM cons_data "
-            f"WHERE date(date) = date('{day}'))"
-    )).scalars().all()
-    print(res)
+@app.post("/titles", response_model=list[EntityTitlesResponse])
+async def entity_titles(entities: EntityTitles, db: Session = Depends(get_db)):
+    res = title.get_entity_titles(db=db, entities=entities)
     return res
-
-
-@app.get("/")
-async def root(db: Session = Depends(get_db)):
-    res = get_daily_results(db=db, date=day, country='Russia')
-    return res
-
-@app.get("/hey")
-async def brab(db: Session = Depends(get_db)):
-    res = get_entity_titles(db=db, day=day, country='Russia', entity='LOC', entity_name='рф')
-    return res
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
 
