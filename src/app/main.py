@@ -1,9 +1,11 @@
 from fastapi import FastAPI
-from src.db.session import SessionLocal
+from .db.session import SessionLocal
 from sqlalchemy.orm import Session
-from src.crud import title
+from .crud import title
 from fastapi import Depends
-from src.schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
+from .schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
+from sqlalchemy import text, insert
+from .db.session import *
 
 app = FastAPI()
 
@@ -23,3 +25,15 @@ async def entity_titles(entities: EntityTitles, db: Session = Depends(get_db)):
     res = title.get_entity_titles(db=db, entities=entities)
     return res
 
+@app.get("/")
+async def getall(db: Session = Depends(get_db)):
+    return db.execute(text("SELECT news_title.data FROM news_title")).scalars().all()
+
+@app.post("/ins")
+async def trins(data, db: Session = Depends(get_db)):
+    print(data)
+    tit = db.execute(insert(NewsTitle)
+               .values(data=data)
+               ).scalar_one_or_none()
+    db.commit()
+    return tit

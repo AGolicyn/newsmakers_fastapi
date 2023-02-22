@@ -1,12 +1,13 @@
 import pytest
 from sqlalchemy import insert
-from src.db.session import *
 from sqlalchemy.orm import Session
-from src.tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
+from ..tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
 from fastapi.testclient import TestClient
-from src.main import *
+from ..db.session import *
+from ..main import *
 
-TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@localhost:5432/{TEST_DB_NAME}"
+TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:postgres@db:5432/news_title"
+
 engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)

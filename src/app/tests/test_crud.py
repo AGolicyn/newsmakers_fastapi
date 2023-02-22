@@ -1,10 +1,9 @@
 import datetime
 
-import pytest
 from sqlalchemy.orm import Session
-from src.crud.title import get_daily_results, get_entity_titles
-from src.schema.country_schm import CountryDate, EntityTitles
-from src.tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
+from ..crud.title import get_daily_results, get_entity_titles
+from ..schema.country_schm import CountryDate, EntityTitles
+from ..tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
 
 def test_get_country_entity(db: Session, insert_cons_data):
     required_data = {

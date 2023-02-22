@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from src.schema.country_schm import CountryDate, EntityTitles
-import datetime
+from ..schema.country_schm import CountryDate, EntityTitles
+
 
 def get_daily_results(db: Session, item: CountryDate):
     res = db.execute(text(""

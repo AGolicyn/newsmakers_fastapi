@@ -1,6 +1,5 @@
 import datetime
-import pytest
-from src.tests.data_garbage import RUSSIAN_CONS_DATA
+from ..data_garbage import RUSSIAN_CONS_DATA
 from fastapi.testclient import TestClient
 
 
