@@ -1,4 +1,3 @@
-import os
 import uuid
 import datetime
 import os
@@ -33,8 +32,6 @@ class ConsolidatedData(Base):
     __tablename__ = 'cons_data'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    lang: Mapped[str] = mapped_column()
     entities: Mapped[Mapping] = mapped_column(JSONB)
     date: Mapped[datetime.date] = mapped_column(Date, server_default=func.now())
-    image_path: Mapped[str] = mapped_column(server_default='')
 

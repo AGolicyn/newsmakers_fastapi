@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from sqlalchemy import insert
 from sqlalchemy.orm import Session
@@ -6,7 +8,7 @@ from fastapi.testclient import TestClient
 from ..db.session import *
 from ..main import *
 
-TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:postgres@db:5432/news_title"
+TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('TEST_DATABASE_URL')
 
 engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

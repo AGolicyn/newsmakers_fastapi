@@ -1,13 +1,27 @@
-from fastapi import FastAPI
-from .db.session import SessionLocal
-from sqlalchemy.orm import Session
-from .crud import title
-from fastapi import Depends
-from .schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
+from fastapi import FastAPI, Depends
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text, insert
+from sqlalchemy.orm import Session
+
+from .crud import title
+from .schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
 from .db.session import *
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:8080",
+    "http://*:8080",
+    "http://0.0.0.0:8080",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods='*',
+    allow_headers='*',
+)
 
 def get_db():
     db = SessionLocal()
@@ -20,20 +34,7 @@ def get_db():
 async def country_entities(item: CountryDate, db: Session = Depends(get_db)):
     return title.get_daily_results(db=db, item=item)
 
-@app.post("/titles", response_model=list[EntityTitlesResponse])
+@app.post("/titles",)#  response_model=list[EntityTitlesResponse])
 async def entity_titles(entities: EntityTitles, db: Session = Depends(get_db)):
     res = title.get_entity_titles(db=db, entities=entities)
     return res
-
-@app.get("/")
-async def getall(db: Session = Depends(get_db)):
-    return db.execute(text("SELECT news_title.data FROM news_title")).scalars().all()
-
-@app.post("/ins")
-async def trins(data, db: Session = Depends(get_db)):
-    print(data)
-    tit = db.execute(insert(NewsTitle)
-               .values(data=data)
-               ).scalar_one_or_none()
-    db.commit()
-    return tit
