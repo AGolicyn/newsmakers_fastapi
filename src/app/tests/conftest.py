@@ -45,8 +45,7 @@ def db():
 def insert_cons_data(db: Session):
     """ROUTE FOR TEST PURPOSES ONLY"""
     new_res = db.execute(insert(ConsolidatedData)
-                         .values(entities=RUSSIAN_CONS_DATA,
-                                 lang='RU')
+                         .values(entities=RUSSIAN_CONS_DATA)
                          .returning(ConsolidatedData)
                          ).scalar_one_or_none()
     db.commit()

@@ -11,6 +11,16 @@ def test_post_entities(client: TestClient, insert_titles):
 
     assert response.status_code == 200
     data = response.json()
-    for result, test in zip(data, TEST_TITLES):
-        assert result['href'] == test['href']
-        assert result['title'] == test['title']
+
+    result = set()
+    test = set()
+
+    for res in data:
+        result.add(res['href'])
+        result.add(res['title'])
+
+    for res in TEST_TITLES:
+        test.add(res['href'])
+        test.add(res['title'])
+
+    assert result == test

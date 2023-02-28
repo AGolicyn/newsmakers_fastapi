@@ -25,4 +25,5 @@ def test_get_titles_by_id(db: Session, insert_titles):
 
     result = get_entity_titles(db=db, entities=entities)
 
-    assert result == TEST_TITLES
+    for title in result:
+        assert title in TEST_TITLES

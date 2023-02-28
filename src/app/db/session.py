@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import Date
 
-LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@db:5432/news_title'
+LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@0.0.0.0:5432/news_title'
 
 SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL', default=LOCAL_DATABASE_URL)
 

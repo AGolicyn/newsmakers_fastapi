@@ -34,7 +34,7 @@ def get_db():
 async def country_entities(item: CountryDate, db: Session = Depends(get_db)):
     return title.get_daily_results(db=db, item=item)
 
-@app.post("/titles",)#  response_model=list[EntityTitlesResponse])
+@app.post("/titles", response_model=list[EntityTitlesResponse])
 async def entity_titles(entities: EntityTitles, db: Session = Depends(get_db)):
     res = title.get_entity_titles(db=db, entities=entities)
     return res
