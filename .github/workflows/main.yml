@@ -46,6 +46,7 @@ jobs:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: test_db
       TEST_DATABASE_URL: "postgresql://test:test@test_db/test_db"
+      DATABASE_URL: "postgresql://test:test@test_db/test_db"
       PYTHONPATH: ./src
     steps:
       - 
