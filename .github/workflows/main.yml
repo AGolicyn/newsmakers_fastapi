@@ -60,9 +60,9 @@ jobs:
           pip install -r src/requirements.txt
       - 
         name: Setup alembic migrations
-        working-directory: /src
         run: |
           alembic -c "alembic-test.ini" upgrade head
+        working-directory: ./src
       - 
         name: Testing with pytest
         run: | 
