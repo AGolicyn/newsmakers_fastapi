@@ -61,8 +61,10 @@ jobs:
       - 
         name: Setup alembic migrations
         working-directory: /src
-        run: alembic -c "alembic-test.ini" upgrade head
+        run: |
+          alembic -c "alembic-test.ini" upgrade head
       - 
         name: Testing with pytest
-        run: pytest .
+        run: | 
+          pytest .
         
