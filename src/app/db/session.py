@@ -15,9 +15,13 @@ SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL', default=LOCAL_DATABASE_
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 
-class Base(DeclarativeBase): pass
+
+class Base(DeclarativeBase):
+    pass
+
 
 Base.metadata.create_all(bind=engine)
+
 
 class NewsTitle(Base):
     __tablename__ = 'news_title'
@@ -34,4 +38,3 @@ class ConsolidatedData(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     entities: Mapped[Mapping] = mapped_column(JSONB)
     date: Mapped[datetime.date] = mapped_column(Date, server_default=func.now())
-

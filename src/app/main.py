@@ -1,12 +1,11 @@
 from fastapi import FastAPI, Depends
-from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text, insert
 from sqlalchemy.orm import Session
 
-from .crud import title
-from .schema.country_schm import EntityTitles, CountryDate, CountryDateResponse, EntityTitlesResponse
-from .db.session import *
+from app.crud import title
+from app.schema.country_schm import EntityTitles, \
+    CountryDate, CountryDateResponse, EntityTitlesResponse
+from app.db.session import SessionLocal
 
 app = FastAPI()
 
@@ -23,6 +22,7 @@ app.add_middleware(
     allow_headers='*',
 )
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -30,9 +30,11 @@ def get_db():
     finally:
         db.close()
 
+
 @app.post("/country", response_model=CountryDateResponse)
 async def country_entities(item: CountryDate, db: Session = Depends(get_db)):
     return title.get_daily_results(db=db, item=item)
+
 
 @app.post("/titles", response_model=list[EntityTitlesResponse])
 async def entity_titles(entities: EntityTitles, db: Session = Depends(get_db)):

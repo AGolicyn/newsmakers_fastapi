@@ -1,6 +1,7 @@
 from ..data_garbage import TEST_TITLES
 from fastapi.testclient import TestClient
 
+
 def test_post_entities(client: TestClient, insert_titles):
     ids = []
     for title_db in insert_titles:
