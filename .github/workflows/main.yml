@@ -28,3 +28,40 @@ jobs:
         run: |
           pip install flake8
           flake8 --ignore=E501,E122,W503 --exclude=src/news_title,src/test_db src
+  test:
+    runs-on: ubuntu-latest
+    services: 
+      postgres:
+        image: postgres:15.1-alpine
+        ports: 
+          - "5432:5432"
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+    env: 
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test_db
+      DATABASE_URL: "postgresql://test:test@localhost:5432/test_db"
+    steps:
+      - 
+        uses: actions/checkout@v3
+      -
+        name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'pip'
+      - 
+        name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/requirements.txt
+      - 
+        name: Setup alembic migrations
+        run: alembic -c "alembic-test.ini" upgrade head
+      - 
+        name: Testing with pytest
+        run: pytest .
+        
