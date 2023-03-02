@@ -93,4 +93,4 @@ jobs:
           context: .
           file: ./docker/fastapi/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/newsmakers/backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/newsmakers-backend:latest
