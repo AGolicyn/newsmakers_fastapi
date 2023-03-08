@@ -1,31 +1,51 @@
 import datetime
-
-from sqlalchemy.orm import Session
+import pytest
+from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..crud.title import get_daily_results, get_entity_titles
 from ..schema.country_schm import CountryDate, EntityTitles
 from ..tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
+from app.db.session import *
+from sqlalchemy import insert
 
 
-def test_get_country_entity(db: Session, insert_cons_data):
+@pytest.mark.asyncio
+async def test_get_country_entity(session: AsyncGenerator):
+    # fill db with some data
+    db = await anext(session)
+    await db.execute(insert(ConsolidatedData)
+                     .values(entities=RUSSIAN_CONS_DATA)
+                     .returning(ConsolidatedData))
+    await db.commit()
+    # try to get data
     required_data = {
         "country": "Russia",
         "date": datetime.date.today()
     }
     item = CountryDate(**required_data)
-
-    db_data = get_daily_results(db=db, item=item)
-
+    db_data = await get_daily_results(session=db, item=item)
+    # check if its equal to source
     for ent_name in RUSSIAN_CONS_DATA['Russia']:
         assert RUSSIAN_CONS_DATA['Russia'][ent_name] == db_data[ent_name]
 
 
-def test_get_titles_by_id(db: Session, insert_titles):
+@pytest.mark.asyncio
+async def test_get_titles_by_id(session: AsyncGenerator):
+    # fill db with new titles
+    db = await anext(session)
+    result = []
+    for title in TEST_TITLES:
+        new_title = await db.execute(insert(NewsTitle)
+                                     .values(data=title)
+                                     .returning(NewsTitle))
+        result.append(new_title.scalar_one_or_none())
+    await db.commit()
     ids = []
-    for title_db in insert_titles:
+    for title_db in result:
         ids.append(title_db.id)
     entities = EntityTitles(**{'entities': ids})
-
-    result = get_entity_titles(db=db, entities=entities)
-
+    # Try to get id's of titles that returned by inserting
+    result = await get_entity_titles(session=db, entities=entities)
+    # Check if they equal to source
     for title in result:
         assert title in TEST_TITLES

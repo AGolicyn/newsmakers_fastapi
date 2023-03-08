@@ -2,25 +2,24 @@ import uuid
 import datetime
 import os
 
-from sqlalchemy import create_engine, func, UUID, text
-from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.ext.asyncio import async_sessionmaker, \
+    create_async_engine, AsyncSession
+from sqlalchemy import func, UUID, text
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from collections.abc import Mapping
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import Date
 
-LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@0.0.0.0:5432/news_title'
-
+LOCAL_DATABASE_URL = 'postgresql+asyncpg://postgres:postgres@0.0.0.0:5432/news_title'
 SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL', default=LOCAL_DATABASE_URL)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True, future=True)
+Base = declarative_base()
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autoflush=False, bind=engine)
+AsyncSessionFactory = async_sessionmaker(engine, expire_on_commit=False)
 
-
-class Base(DeclarativeBase):
-    pass
-
-
-Base.metadata.create_all(bind=engine)
+async def get_db() -> AsyncSession:
+    async with AsyncSessionFactory() as session:
+        yield session
 
 
 class NewsTitle(Base):
