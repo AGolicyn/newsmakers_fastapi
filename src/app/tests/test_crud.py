@@ -1,11 +1,10 @@
-import datetime
 import pytest
+import datetime
 from collections.abc import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncSession
 from ..crud.title import get_daily_results, get_entity_titles
 from ..schema.country_schm import CountryDate, EntityTitles
 from ..tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
-from app.db.session import *
+from app.db.session import NewsTitle, ConsolidatedData
 from sqlalchemy import insert
 
 

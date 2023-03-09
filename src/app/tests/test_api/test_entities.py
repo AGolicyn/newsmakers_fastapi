@@ -1,8 +1,8 @@
 import pytest
 from httpx import AsyncClient
 from collections.abc import AsyncGenerator
-from app.tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
-from app.db.session import *
+from app.tests.data_garbage import TEST_TITLES
+from app.db.session import NewsTitle
 from sqlalchemy import insert
 from app.main import app
 

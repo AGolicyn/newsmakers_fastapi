@@ -1,9 +1,8 @@
 import pytest
+import datetime
 from collections.abc import AsyncGenerator
-
-from app.tests.conftest import TestSessionFactory
-from app.tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
-from app.db.session import *
+from app.tests.data_garbage import RUSSIAN_CONS_DATA
+from app.db.session import ConsolidatedData
 from sqlalchemy import insert
 from httpx import AsyncClient
 from app.main import app

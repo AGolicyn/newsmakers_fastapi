@@ -1,14 +1,13 @@
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from app.schema.country_schm import CountryDate, EntityTitles
-from fastapi import HTTPException
+from ..schema.country_schm import CountryDate, EntityTitles
 
 
 async def get_daily_results(session: AsyncSession, item: CountryDate):
     res = await session.execute(text(""
-                                         "SELECT entities#> '{%s}' FROM cons_data " % item.country
-                                         + f"WHERE date(date) = date('{item.date}')"
-                                         ))
+                                     "SELECT entities#> '{%s}' FROM cons_data " % item.country
+                                     + f"WHERE date(date) = date('{item.date}')"
+                                     ))
     return res.scalars().all()[-1]
 
 
