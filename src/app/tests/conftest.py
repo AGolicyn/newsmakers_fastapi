@@ -2,13 +2,13 @@ import os
 import asyncio
 import pytest
 from sqlalchemy.orm import declarative_base
-from ..db.session import text, get_db
+from app.db.session import text, get_db
 from sqlalchemy.ext.asyncio import async_sessionmaker, \
     create_async_engine, AsyncSession
 
-from ..main import app
+from app.main import app
 
-TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('TEST_DATABASE_URL')
+TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('ASYNC_TEST_DATABASE_URL')
 engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True, future=True)
 Base = declarative_base()
 
