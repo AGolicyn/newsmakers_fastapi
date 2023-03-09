@@ -11,7 +11,7 @@ from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import async_sessionmaker, \
     create_async_engine, AsyncSession
 
-from app.main import app
+app = 0
 
 TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('ASYNC_TEST_DATABASE_URL')
 engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True, future=True)
