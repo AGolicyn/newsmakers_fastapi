@@ -1,72 +1,43 @@
 import os
-
+import asyncio
 import pytest
-from sqlalchemy import insert
-from app.tests.data_garbage import RUSSIAN_CONS_DATA, TEST_TITLES
-from fastapi.testclient import TestClient
-from app.db.session import \
-    Base, create_engine, sessionmaker, text, \
-    ConsolidatedData, NewsTitle
-from sqlalchemy.orm import Session
-from app.main import app, get_db
+from sqlalchemy.orm import declarative_base
+from app.db.session import text, get_db
+from sqlalchemy.ext.asyncio import async_sessionmaker, \
+    create_async_engine, AsyncSession
 
-TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('TEST_DATABASE_URL')
+from app.main import app
 
-engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base.metadata.create_all(bind=engine)
+TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('ASYNC_TEST_DATABASE_URL')
+engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True, future=True)
+Base = declarative_base()
+
+TestSessionFactory = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
-def override_get_db():
-    test_db = TestSessionLocal()
-    try:
-        yield test_db
-    finally:
-        test_db.execute(text('DELETE FROM news_title'))
-        test_db.execute(text('DELETE FROM cons_data'))
-        test_db.commit()
-        test_db.close()
+async def override_get_db() -> AsyncSession:
+    async with TestSessionFactory() as session:
+        yield session
 
 
 app.dependency_overrides[get_db] = override_get_db
 
 
-@pytest.fixture(scope='module')
-def client():
-    yield TestClient(app)
-
-
 @pytest.fixture()
-def db():
-    test_db = TestSessionLocal()
-    try:
-        yield test_db
-    finally:
-        test_db.execute(text('DELETE FROM news_title'))
-        test_db.execute(text('DELETE FROM cons_data'))
-        test_db.commit()
-        test_db.close()
+async def session():
+    async with TestSessionFactory() as session:
+        try:
+            yield session
+        finally:
+            await session.execute(text('DELETE FROM news_title'))
+            await session.execute(text('DELETE FROM cons_data'))
+            await session.commit()
+            await session.close()
 
 
-@pytest.fixture()
-def insert_cons_data(db: Session):
-    """ROUTE FOR TEST PURPOSES ONLY"""
-    new_res = db.execute(insert(ConsolidatedData)
-                         .values(entities=RUSSIAN_CONS_DATA)
-                         .returning(ConsolidatedData)
-                         ).scalar_one_or_none()
-    db.commit()
-    yield new_res
-
-
-@pytest.fixture()
-def insert_titles(db: Session):
-    result = []
-    for title in TEST_TITLES:
-        new_title = db.execute(insert(NewsTitle)
-                               .values(data=title)
-                               .returning(NewsTitle)
-                               ).scalar_one_or_none()
-        result.append(new_title)
-    db.commit()
-    return result
+@pytest.fixture(scope="session")
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
