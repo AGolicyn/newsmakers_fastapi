@@ -7,27 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - 
-        uses: actions/checkout@v3
-      - 
-        name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-          cache: 'pip'
-      - 
-        name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r src/requirements.txt
-      - 
-        name: Lint with flake8
-        run: |
-          pip install flake8
-          flake8 --ignore=E501,E122,W503 --exclude=src/news_title,src/test_db src
   test:
     runs-on: ubuntu-latest
     services: 
@@ -51,7 +30,7 @@ jobs:
     steps:
       - 
         uses: actions/checkout@v3
-      -
+      - 
         name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -63,6 +42,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r src/requirements.txt
       - 
+        name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 --ignore=E501,E122,W503 --exclude=src/news_title,src/test_db src
+      - 
         name: Setup alembic migrations
         run: |
           alembic -c "alembic-test.ci.ini" upgrade head
@@ -70,9 +54,11 @@ jobs:
       - 
         name: Testing with pytest
         run: | 
+          pip install pytest
+          pip install pytest-asyncio
           pytest .
   pull:
-    needs: [test, lint]
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - 
