@@ -1,6 +1,7 @@
 import os
 import asyncio
 import pytest
+import pytest_asyncio
 from sqlalchemy.orm import declarative_base
 from app.db.session import text, get_db
 from sqlalchemy.ext.asyncio import async_sessionmaker, \
@@ -23,7 +24,7 @@ async def override_get_db() -> AsyncSession:
 app.dependency_overrides[get_db] = override_get_db
 
 
-@pytest.fixture()
+@pytest_asyncio.fixture
 async def session():
     async with TestSessionFactory() as session:
         try:

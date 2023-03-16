@@ -1,6 +1,6 @@
 import pytest
 import datetime
-from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.tests.data_garbage import RUSSIAN_CONS_DATA
 from app.db.session import ConsolidatedData
 from sqlalchemy import insert
@@ -9,8 +9,7 @@ from app.main import app
 
 
 @pytest.mark.asyncio
-async def test_post_country(session: AsyncGenerator):
-    session = await anext(session)
+async def test_post_country(session: AsyncSession):
     # insert some data
     await session.execute(insert(ConsolidatedData)
                           .values(entities=RUSSIAN_CONS_DATA)
@@ -27,8 +26,7 @@ async def test_post_country(session: AsyncGenerator):
 
 
 @pytest.mark.asyncio
-async def test_post_country_with_date_from_future(session: AsyncGenerator):
-    session = await anext(session)
+async def test_post_country_with_date_from_future(session: AsyncSession):
     await session.execute(insert(ConsolidatedData)
                           .values(entities=RUSSIAN_CONS_DATA)
                           .returning(ConsolidatedData))
@@ -46,8 +44,7 @@ async def test_post_country_with_date_from_future(session: AsyncGenerator):
 
 
 @pytest.mark.asyncio
-async def test_post_country_with_invalid_country(session: AsyncGenerator):
-    session = await anext(session)
+async def test_post_country_with_invalid_country(session: AsyncSession):
     await session.execute(insert(ConsolidatedData)
                           .values(entities=RUSSIAN_CONS_DATA)
                           .returning(ConsolidatedData))

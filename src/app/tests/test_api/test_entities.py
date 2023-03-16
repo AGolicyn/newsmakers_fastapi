@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.tests.data_garbage import TEST_TITLES
 from app.db.session import NewsTitle
 from sqlalchemy import insert
@@ -8,15 +8,14 @@ from app.main import app
 
 
 @pytest.mark.asyncio
-async def test_post_entities(session: AsyncGenerator):
-    db = await anext(session)
+async def test_post_entities(session: AsyncSession):
     result = []
     for title in TEST_TITLES:
-        new_title = await db.execute(insert(NewsTitle)
-                                     .values(data=title)
-                                     .returning(NewsTitle))
+        new_title = await session.execute(insert(NewsTitle)
+                                          .values(data=title)
+                                          .returning(NewsTitle))
         result.append(new_title.scalar_one_or_none())
-    await db.commit()
+    await session.commit()
 
     ids = []
     for title_db in result:
