@@ -6,6 +6,7 @@ on:
 
 jobs:
   call_test_workflow:
+    name: testing
     uses: ./.github/workflows/test.yml
   pull:
     needs: call_test_workflow
@@ -30,3 +31,18 @@ jobs:
           file: ./docker/fastapi/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/newsmakers-backend:latest
+  deploy:
+    needs: pull
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using key
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          docker compose down
+          docker compose pull fastapi
+          docker compose up --build
