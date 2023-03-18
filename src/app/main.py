@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.environ.get('ORIGIN', default='http://localhost:8080'),
+    allow_origins="*",
     allow_credentials=True,
     allow_methods='*',
     allow_headers='*',
