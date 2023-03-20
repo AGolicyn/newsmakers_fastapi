@@ -6,7 +6,8 @@ from ..schema.country_schm import CountryDate, EntityTitles
 async def get_daily_results(session: AsyncSession, item: CountryDate):
     res = await session.execute(text(""
                                      "SELECT entities#> '{%s}' FROM cons_data " % item.country
-                                     + f"WHERE date = date('{item.date}')"
+                                     + f"WHERE date = date('{item.date}') "
+                                       f"AND entities ? '{item.country}'"
                                      ))
     result = res.scalars().all()[-1]
     return result
