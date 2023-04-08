@@ -28,3 +28,35 @@ class CountryDateResponse(BaseModel):
 class EntityTitlesResponse(BaseModel):
     href: HttpUrl
     title: str
+
+
+class TrendRequest(CountryDate):
+    token: str
+    day_offset: int
+
+    @validator('day_offset')
+    def offset_must_be_positive(cls, day_offset):
+        if day_offset <= 0:
+            raise HTTPException(status_code=422, detail="Offset should be positive")
+        return day_offset
+
+    @validator('token')
+    def token_validation(cls, token):
+        try:
+            tmp_token = token.strip()
+
+            if not tmp_token or len(tmp_token) == 1:
+                raise HTTPException(status_code=422, detail="Too short or empty token")
+            elif len(tmp_token) in (2, 3):
+                token = "%" + tmp_token.lower() + "%"
+            else:
+                token = "%" + tmp_token.lower()[:-1] + "%"
+
+        except (ValueError, TypeError):
+            raise HTTPException(status_code=422, detail=f"'{token}' is not valid token")
+
+        return token
+
+class TrendResponse(BaseModel):
+    date: datetime.date
+    weight: float
