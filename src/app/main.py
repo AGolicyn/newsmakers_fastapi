@@ -34,14 +34,7 @@ async def entity_titles(entities: EntityTitles,
                         session: AsyncSession = Depends(get_db)):
     return await title.get_entity_titles(session=session, entities=entities)
 
-@app.get("/trend/", response_model=list[TrendResponse])
-async def test(country: str,
-               token: str,
-               date: str,
-               day_offset: int,
+@app.post("/trend", response_model=list[TrendResponse])
+async def test(trend: TrendRequest,
                session: AsyncSession = Depends(get_db)):
-    # return {country: country, token: token, date: date, day_offset: day_offset}
-    trend = TrendRequest(country=country, token=token, date=date, day_offset=day_offset)
     return await trend_factory(trend=trend, session=session)
-    # await title.test(trend=trend, session=session)
-    # return {'Hey': True}

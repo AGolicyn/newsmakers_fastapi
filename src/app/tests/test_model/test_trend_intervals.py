@@ -77,4 +77,14 @@ def test_interval_with_empty_body():
     assert result[2].trends[0].date == datetime.date(2023, 3, 31)
     assert result[2].trends[0].qty == 3
     assert result[2].trends[0].source == 'test-3'
-    
+
+def test_interval_empty():
+    start_day = datetime.date(2023, 4, 2)
+    offset = 3
+    trends = []
+
+    result = make_trend_interval(trends=trends, start_day=start_day, offset=offset)
+
+    assert len(result) == 3
+    for obj in result:
+        assert isinstance(obj, DayTrend)

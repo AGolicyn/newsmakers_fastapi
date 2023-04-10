@@ -93,9 +93,10 @@ class TrandLine:
 def make_trend_interval(trends: list[Trend],
                         start_day: datetime.date,
                         offset: int) -> list[DayTrend]:
+
     target_day = start_day - datetime.timedelta(days=offset)
     current = start_day
-    exists_current = trends[0].date
+    exists_current = trends[0].date if trends else target_day
     result = []
 
     while current > exists_current:
