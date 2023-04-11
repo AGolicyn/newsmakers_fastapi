@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +16,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins="*",
     allow_credentials=True,
-    allow_methods='*',
+    allow_methods='POST',
     allow_headers='*',
 )
 
@@ -33,6 +31,7 @@ async def country_entities(item: CountryDate,
 async def entity_titles(entities: EntityTitles,
                         session: AsyncSession = Depends(get_db)):
     return await title.get_entity_titles(session=session, entities=entities)
+
 
 @app.post("/trend", response_model=list[TrendResponse])
 async def test(trend: TrendRequest,

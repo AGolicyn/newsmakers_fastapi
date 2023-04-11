@@ -57,6 +57,7 @@ class TrendRequest(CountryDate):
 
         return token
 
+
 class TrendResponse(BaseModel):
     date: datetime.date
     weight: float

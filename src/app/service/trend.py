@@ -3,6 +3,7 @@ from app.crud.title import get_trand_interval, get_sources
 from app.schema.country_schm import TrendRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 async def trend_factory(trend: TrendRequest, session: AsyncSession):
     trends = await get_trand_interval(trend=trend, session=session)
     all_sources = await get_sources(trend=trend, session=session)
@@ -13,4 +14,3 @@ async def trend_factory(trend: TrendRequest, session: AsyncSession):
                                        start_day=trend.date,
                                        offset=trend.day_offset)
     return weighted_trends
-

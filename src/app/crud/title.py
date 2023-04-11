@@ -1,11 +1,9 @@
 import datetime
-from datetime import date
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, Date, desc
 from app.schema.country_schm import CountryDate, EntityTitles, TrendRequest
 from app.db.session import ConsolidatedData, NewsTitle
-
 
 
 async def get_daily_results(session: AsyncSession, item: CountryDate):
@@ -32,6 +30,7 @@ async def get_sources(trend: TrendRequest, session: AsyncSession):
 
     sources = await session.execute(stmt)
     return sources.all()
+
 
 async def get_trand_interval(trend: TrendRequest, session: AsyncSession):
     interval = trend.date - datetime.timedelta(days=trend.day_offset)

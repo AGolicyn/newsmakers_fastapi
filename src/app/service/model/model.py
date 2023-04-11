@@ -76,8 +76,9 @@ class TrandLine:
             # Частота появления токена
             w2_weights.append(trend.get_token_quantity())
 
-        average = sum(w2_weights) / len([x for x in w2_weights if x > 0])
-        w2_weights = [qty / average for qty in w2_weights]
+        w2_weights = [qty * 0.01 for qty in w2_weights]
+        print(w1_weights)
+        print(w2_weights)
         return list(
             [
                 WeightTrend(date=trend.trend_day, weight=round(k1 * w1 + k2 * w2, 2))
@@ -87,7 +88,7 @@ class TrandLine:
         )
 
     def get_weighted_trends(self) -> list[WeightTrend]:
-        return self._count_weights(k1=0.8, k2=0.2)
+        return self._count_weights(k1=0.6, k2=0.4)
 
 
 def make_trend_interval(trends: list[Trend],
