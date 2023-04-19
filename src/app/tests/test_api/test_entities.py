@@ -11,9 +11,9 @@ from app.main import app
 async def test_post_entities(session: AsyncSession):
     result = []
     for title in TEST_TITLES:
-        new_title = await session.execute(insert(NewsTitle)
-                                          .values(data=title)
-                                          .returning(NewsTitle))
+        new_title = await session.execute(
+            insert(NewsTitle).values(data=title).returning(NewsTitle)
+        )
         result.append(new_title.scalar_one_or_none())
     await session.commit()
 
@@ -32,11 +32,11 @@ async def test_post_entities(session: AsyncSession):
     test = set()
 
     for res in data:
-        result.add(res['href'])
-        result.add(res['title'])
+        result.add(res["href"])
+        result.add(res["title"])
 
     for res in TEST_TITLES:
-        test.add(res['href'])
-        test.add(res['title'])
+        test.add(res["href"])
+        test.add(res["title"])
 
     assert result == test

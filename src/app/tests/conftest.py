@@ -4,12 +4,11 @@ import pytest
 import pytest_asyncio
 from sqlalchemy.orm import declarative_base
 from app.db.session import text, get_db
-from sqlalchemy.ext.asyncio import async_sessionmaker, \
-    create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 
 from app.main import app
 
-TEST_SQLALCHEMY_DATABASE_URL = os.environ.get('ASYNC_TEST_DATABASE_URL')
+TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("ASYNC_TEST_DATABASE_URL")
 engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True, future=True)
 Base = declarative_base()
 
@@ -30,8 +29,8 @@ async def session():
         try:
             yield session
         finally:
-            await session.execute(text('DELETE FROM news_title'))
-            await session.execute(text('DELETE FROM cons_data'))
+            await session.execute(text("DELETE FROM news_title"))
+            await session.execute(text("DELETE FROM cons_data"))
             await session.commit()
             await session.close()
 
