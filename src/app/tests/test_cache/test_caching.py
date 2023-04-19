@@ -1,3 +1,5 @@
+import os
+
 import pytest
 import uuid
 import string
@@ -9,7 +11,7 @@ from app.service.repository import get_entity_titles
 from app.schema.country_schm import EntityTitles
 
 
-connection = redis.from_url("redis://cache", decode_responses=True)
+connection = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
 fake_entities = EntityTitles(**{"entities": [uuid.uuid4() for _ in range(8)]})
 fake_data = [[string.ascii_letters for _ in range(randint(5, 10))] for __ in range(8)]
 
