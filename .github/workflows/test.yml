@@ -20,12 +20,13 @@ jobs:
         ports: 
             - '6379:6379'
         options: >-
-          --maxmemory 2mb
-          --maxmemory-policy allkeys-lru
-          --protected-mode no
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       
     env:
-      REDIS_URL: redis://cache
+      REDIS_URL: redis://localhost:6379
       POSTGRES_HOST: test_db
       POSTGRES_PORT: 5432
       POSTGRES_USER: test
