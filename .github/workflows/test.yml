@@ -15,6 +15,15 @@ jobs:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
           POSTGRES_DB: test_db
+      cache:
+        image: redis/redis-stack
+        ports: 
+            - '6379:6379'
+        options: >-
+          --maxmemory 2mb
+          --maxmemory-policy allkeys-lru
+          --protected-mode no
+      
     env:
       REDIS_URL: redis://cache
       POSTGRES_HOST: test_db
